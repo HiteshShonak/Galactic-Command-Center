@@ -7,14 +7,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      background: #070b18;
-    }
+    body { background: #070b18; }
     .star {
-      position: absolute;
-      border-radius: 50%;
-      background: white;
-      opacity: 0.9;
+      position: absolute; border-radius: 50%; background: white; opacity: 0.9;
       animation: starMove 20s linear infinite, starTwinkle 1.5s ease-in-out infinite alternate;
     }
     @keyframes starMove {
@@ -41,12 +36,9 @@
     }
     .burst-particle {
       position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #00ffea;
-      opacity: 0;
-      animation: burst 0.5s ease-out;
-      pointer-events: none;
+      width: 4px; height: 4px;
+      background: #00ffea; opacity: 0;
+      animation: burst 0.5s ease-out; pointer-events: none;
     }
     @keyframes burst {
       0% { opacity: 1; transform: scale(1) translate(0,0); }
@@ -62,12 +54,10 @@
     @keyframes fadeIn {
       from{opacity:0;}to{opacity:1;}
     }
-    .modal-content {
-      animation: modalScaleFade .4s ease-out;
-    }
+    .modal-content { animation: modalScaleFade .4s ease-out; }
     @keyframes modalScaleFade {
       from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
+      to   { opacity: 1; transform: scale(1); }
     }
     .heart-beat {
       display: inline-block;
@@ -80,9 +70,7 @@
       42% { transform: scale(1.3); }
       70% { transform: scale(1); }
     }
-    .data-update {
-      animation: dataFade 0.5s;
-    }
+    .data-update { animation: dataFade 0.5s; }
     @keyframes dataFade {
       from { opacity: 0; transform: translateY(5px); }
       to { opacity: 1; transform: translateY(0); }
@@ -91,10 +79,10 @@
 </head>
 <body class="relative min-h-screen overflow-x-hidden font-sans">
 
- 
+  
   <div id="starfield"></div>
 
- 
+  
   <header class="flex items-center gap-4 justify-between px-6 py-4 fixed top-0 left-0 right-0 bg-[#101122ee] backdrop-blur-md z-10">
     <div class="text-cyan-200 font-bold tracking-wider text-lg">GALACTIC COMMAND CENTER</div>
     <div class="flex items-center gap-4">
@@ -103,22 +91,16 @@
     </div>
   </header>
 
-  <!-- Mission cards grid -->
+  <!-- Mission cards -->
   <main class="pt-24 px-4 sm:px-8 pb-10 min-h-[calc(100vh-8rem)]">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 w-full max-w-7xl mx-auto">
-
-
-      
       <!-- Satellite Telemetry Card -->
       <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
         onclick="showModal('satellite')">
-        <div class="text-cyan-300 mb-4 font-semibold tracking-wide text-2xl">
-          Satellites
-        </div>
+        <div class="text-cyan-300 mb-4 font-semibold tracking-wide text-2xl">Satellites</div>
         <div id="sat-alt" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">420 km</div>
         <div class="text-sm text-cyan-200 mt-2 opacity-70">Altitude</div>
       </div>
-
       <!-- ISS Orbit Card -->
       <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
         onclick="showModal('iss')">
@@ -126,7 +108,6 @@
         <div id="iss-latlon" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">Lat: 25° Lon: 70°</div>
         <div class="text-sm text-purple-200 mt-2 opacity-70">Location</div>
       </div>
-
       <!-- Mars Weather Card -->
       <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
         onclick="showModal('mars')">
@@ -134,7 +115,6 @@
         <div id="mars-temp" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">-48°C</div>
         <div class="text-sm text-orange-200 mt-2 opacity-70">Temperature</div>
       </div>
-
       <!-- Asteroid Tracking Card -->
       <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
         onclick="showModal('asteroids')">
@@ -142,7 +122,6 @@
         <div id="asteroid-next" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">4 days</div>
         <div class="text-sm text-rose-200 mt-2 opacity-70">Next NEO Approach</div>
       </div>
-
       <!-- Lunar Mission Card -->
       <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
         onclick="showModal('lunar')">
@@ -150,7 +129,6 @@
         <div id="lunar-status" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">Orbiting</div>
         <div class="text-sm text-blue-200 mt-2 opacity-70">Status</div>
       </div>
-
       <!-- Crew Vitals Card -->
       <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
         onclick="showModal('crew')">
@@ -158,7 +136,6 @@
         <div id="crew-heart" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">75 bpm</div>
         <div class="text-sm text-green-200 mt-2 opacity-70">Heart Rate</div>
       </div>
-
       <!-- Space Weather Card -->
       <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
         onclick="showModal('spaceweather')">
@@ -166,7 +143,6 @@
         <div id="space-flare" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">Minor</div>
         <div class="text-sm text-yellow-200 mt-2 opacity-70">Solar Flare</div>
       </div>
-
       <!-- Rocket Missions Card -->
       <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
         onclick="showModal('rockets')">
@@ -174,7 +150,6 @@
         <div id="rocket-alt" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">150 km</div>
         <div class="text-sm text-red-200 mt-2 opacity-70">Altitude</div>
       </div>
-
     </div>
   </main>
 
@@ -187,15 +162,11 @@
   <div id="modal" class="hidden"></div>
 
   <script>
-
-    
     function setUTC() {
-      document.getElementById('utc').textContent =
-        'UTC ' + new Date().toUTCString().split(' ')[4];
+      document.getElementById('utc').textContent = 'UTC ' + new Date().toUTCString().split(' ')[4];
     }
     setUTC();
     setInterval(setUTC, 1000);
-
 
     
     const starCount = 200;
@@ -213,8 +184,6 @@
       starfield.appendChild(s);
     }
 
- 
-    
     function randomBetween(a, b) { return +(Math.random() * (b - a) + a).toFixed(1); }
     function generateSatelliteData() {
       return { altitude: randomBetween(400, 1000), speed: randomBetween(7, 8.5), signal: randomBetween(80, 90), time: new Date().toLocaleTimeString() };
@@ -241,8 +210,6 @@
       return { name, altitude: randomBetween(100, 400), velocity: randomBetween(5, 8), stage: ['Stage 1', 'Stage 2', 'Orbit'][Math.floor(Math.random() * 3)], lat: randomBetween(-90, 90), lng: randomBetween(-180, 180) };
     }
 
-
-    
     let satelliteData = generateSatelliteData();
     let issData = generateISSData();
     let marsWeather = generateMarsWeather();
@@ -252,8 +219,6 @@
     let spaceWeather = generateSpaceWeatherData();
     let rocketData = [generateRocketData('Falcon 9'), generateRocketData('Starship'), generateRocketData('Artemis SLS')];
 
-
-    
     function updateCards() {
       satelliteData = generateSatelliteData();
       document.getElementById('sat-alt').textContent = satelliteData.altitude + " km";
@@ -271,9 +236,6 @@
       document.getElementById('space-flare').textContent = spaceWeather.solarFlare;
       rocketData = [generateRocketData('Falcon 9'), generateRocketData('Starship'), generateRocketData('Artemis SLS')];
       document.getElementById('rocket-alt').textContent = rocketData[0].altitude + " km";
-
-
-      
       ['sat-alt', 'iss-latlon', 'mars-temp', 'asteroid-next', 'lunar-status', 'crew-heart', 'space-flare', 'rocket-alt'].forEach(id => {
         const el = document.getElementById(id);
         el.classList.add('data-update');
@@ -283,8 +245,6 @@
     updateCards();
     setInterval(updateCards, 2500);
 
-
-    
     document.querySelectorAll('.card-glow').forEach(card => {
       card.addEventListener('mouseenter', (e) => {
         for (let i = 0; i < 10; i++) {
@@ -300,22 +260,52 @@
       });
     });
 
-
-    
     function showModal(card) {
       let body = '';
       if (card === 'satellite') {
         body = `<h2 class="text-cyan-300 text-2xl font-bold mb-4">Satellite Telemetry</h2>
-                <canvas id="satChart" class="w-full h-36"></canvas>
-                <div class="mt-4 text-cyan-200/70 text-base">Altitude: ${satelliteData.altitude} km, Speed: ${satelliteData.speed} km/s, Signal: ${satelliteData.signal} dB</div>`;
+          <canvas id="satChart" class="w-full h-36"></canvas>
+          <div class="flex justify-between mt-4 text-base">
+            <div class="flex items-center">
+              <span class="inline-block w-5 h-5 rounded" style="background:#00ffea"></span>
+              <span class="text-cyan-200/90">Altitude</span>
+            </div>
+            <div class="flex items-center">
+              <span class="inline-block w-5 h-5 rounded" style="background:#6fff7b"></span>
+              <span class="text-green-200/90">Speed</span>
+            </div>
+            <div class="flex items-center">
+              <span class="inline-block w-5 h-5 rounded" style="background:#079fff"></span>
+              <span class="text-blue-200/90">Signal</span>
+            </div>
+          </div>
+          <div class="mt-4 text-cyan-200/70 text-base">Altitude: ${satelliteData.altitude} km, Speed: ${satelliteData.speed} km/s, Signal: ${satelliteData.signal} dB</div>`;
       } else if (card === 'iss') {
         body = `<h2 class="text-purple-300 text-2xl font-bold mb-4">ISS Orbit</h2>
                 <div class="text-purple-200 pb-2 text-lg">Lat: ${issData.lat}°, Lng: ${issData.lng}°, Altitude: ${issData.altitude} km, Crew: ${issData.crew}</div>
                 <canvas id="issChart" class="w-full h-36"></canvas>`;
       } else if (card === 'mars') {
-        body = `<h2 class="text-orange-300 text-2xl font-bold mb-4">Mars Weather</h2>
-                <canvas id="marsChart" class="w-full h-44"></canvas>
-                <div class="mt-4 text-orange-200/70 text-base">Temp: ${marsWeather.temp}°C, Pressure: ${marsWeather.pressure} hPa, Wind: ${marsWeather.wind} m/s, Rover: ${marsWeather.roverStatus}</div>`;
+        body = `
+        <h2 class="text-orange-300 text-2xl font-bold mb-4">Mars Weather</h2>
+        <canvas id="marsChart" class="w-full h-44"></canvas>
+        <div class="flex gap-4 mt-4 items-center justify-center">
+          <div class="flex items-center gap-1">
+            <span class="inline-block w-5 h-5 rounded" style="background:#ff6a3d;"></span>
+            <span class="text-orange-200 font-semibold">Temperature</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="inline-block w-5 h-5 rounded" style="background:#ffe51b;"></span>
+            <span class="text-yellow-300 font-semibold">Pressure</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="inline-block w-5 h-5 rounded" style="background:#00ffea;"></span>
+            <span class="text-cyan-300 font-semibold">Wind</span>
+          </div>
+        </div>
+        <div class="mt-4 text-orange-200/90 text-base">
+          Temp: ${marsWeather.temp}°C, Pressure: ${marsWeather.pressure} hPa, Wind: ${marsWeather.wind} m/s, Rover: ${marsWeather.roverStatus}
+        </div>
+        `;
       } else if (card === 'asteroids') {
         body = `<h2 class="text-rose-300 text-2xl font-bold mb-4">Asteroid Tracking</h2>
                 <div class="text-rose-200 pb-2 text-lg">Name: ${asteroidData.name}, Distance: ${asteroidData.distance} LD, Velocity: ${asteroidData.velocity} km/s, Diameter: ${asteroidData.diameter} m, Risk: ${asteroidData.risk}</div>
@@ -329,9 +319,23 @@
                 <div class="text-green-200 pb-2 text-lg">Heart Rate: ${crewData.heartRate} bpm, Oxygen: ${crewData.oxygen}%, Stress: ${crewData.stress}, Status: ${crewData.status}</div>
                 <canvas id="crewChart" class="w-full h-36"></canvas>`;
       } else if (card === 'spaceweather') {
-        body = `<h2 class="text-yellow-300 text-2xl font-bold mb-4">Space Weather</h2>
-                <div class="text-yellow-200 pb-2 text-lg">Solar Flare: ${spaceWeather.solarFlare}, Geomagnetic: ${spaceWeather.geomagnetic} Kp, Radiation: ${spaceWeather.radiation} mSv</div>
-                <canvas id="spaceChart" class="w-full h-36"></canvas>`;
+        body = `
+        <h2 class="text-yellow-300 text-2xl font-bold mb-4">Space Weather</h2>
+        <canvas id="spaceChart" class="w-full h-36"></canvas>
+        <div class="flex gap-4 mt-4 items-center justify-center">
+          <div class="flex items-center gap-1">
+            <span class="inline-block w-5 h-5 rounded" style="background:#ffd600;"></span>
+            <span class="text-yellow-200 font-semibold">Geomagnetic Index</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="inline-block w-5 h-5 rounded" style="background:#ff6f00;"></span>
+            <span class="text-orange-200 font-semibold">Solar Radiation (mSv)</span>
+          </div>
+        </div>
+        <div class="mt-4 text-yellow-100/90 text-base">
+          Solar Flare: ${spaceWeather.solarFlare}, Geomagnetic: ${spaceWeather.geomagnetic} Kp, Radiation: ${spaceWeather.radiation} mSv
+        </div>
+        `;
       } else if (card === 'rockets') {
         body = `<h2 class="text-red-300 text-2xl font-bold mb-4">Rocket Missions</h2>
                 <div class="text-red-200 pb-2 text-lg">${rocketData.map(r => `${r.name}: Altitude ${r.altitude} km, Velocity ${r.velocity} km/s`).join('<br>')}</div>
@@ -356,7 +360,13 @@
       if (card === 'satellite') {
         new Chart(document.getElementById('satChart'), {
           type: 'doughnut',
-          data: { labels: ['Altitude', 'Speed', 'Signal'], datasets: [{ data: [satelliteData.altitude, satelliteData.speed, satelliteData.signal], backgroundColor: ['#00ffea', '#0ff', '#079fff'] }] }
+          data: {
+            labels: ['Altitude', 'Speed', 'Signal'],
+            datasets: [{
+              data: [satelliteData.altitude, satelliteData.speed, satelliteData.signal],
+              backgroundColor: ['#00ffea', '#6fff7b', '#079fff']
+            }]
+          }
         });
       } else if (card === 'iss') {
         new Chart(document.getElementById('issChart'), {
@@ -366,7 +376,14 @@
       } else if (card === 'mars') {
         new Chart(document.getElementById('marsChart'), {
           type: 'bar',
-          data: { labels: ['Temp', 'Pressure', 'Wind'], datasets: [{ data: [marsWeather.temp, marsWeather.pressure, marsWeather.wind], backgroundColor: ['#ff6a3d', '#ffe51b', '#00ffea'] }] }
+          data: {
+            labels: ['Temperature', 'Pressure', 'Wind'],
+            datasets: [{
+              data: [marsWeather.temp, marsWeather.pressure, marsWeather.wind],
+              backgroundColor: ['#ff6a3d', '#ffe51b', '#00ffea']
+            }]
+          },
+          options: { plugins: { legend: { display: false } } }
         });
       } else if (card === 'asteroids') {
         new Chart(document.getElementById('asteroidChart'), {
@@ -385,8 +402,15 @@
         });
       } else if (card === 'spaceweather') {
         new Chart(document.getElementById('spaceChart'), {
-          type: 'line',
-          data: { labels: ['Geomagnetic', 'Radiation'], datasets: [{ data: [spaceWeather.geomagnetic, spaceWeather.radiation], borderColor: '#f59e0b' }] }
+          type: 'bar',
+          data: {
+            labels: ['Geomagnetic Index', 'Solar Radiation'],
+            datasets: [{
+              data: [spaceWeather.geomagnetic, spaceWeather.radiation],
+              backgroundColor: ['#ffd600', '#ff6f00']
+            }]
+          },
+          options: { plugins: { legend: { display: false } } }
         });
       } else if (card === 'rockets') {
         new Chart(document.getElementById('rocketChart'), {
@@ -395,8 +419,6 @@
         });
       }
     }
-
-    //to use esc
     window.addEventListener('keydown', e=>{if(e.key==='Escape'){closeModal();}});
   </script>
 </body>
