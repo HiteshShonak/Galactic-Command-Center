@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Galactic Command Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #070b18;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      opacity: 0.9;
+      animation: starMove 20s linear infinite, starTwinkle 1.5s ease-in-out infinite alternate;
+    }
+    @keyframes starMove {
+      from { transform: translateY(0); opacity: 0.8; }
+      to { transform: translateY(120vh); opacity: 0.2; }
+    }
+    @keyframes starTwinkle {
+      from { opacity: 0.5; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1.2); }
+    }
+    .card-glow {
+      box-shadow: 0 2px 40px #00ffea40, 0 1.5px 10px #00ffea30, 0 0.5px 1.5px #00fff580;
+      animation: cardNeonPulse 2s ease-in-out infinite;
+      transition: box-shadow .3s, transform .3s;
+    }
+    .card-glow:hover, .card-selected {
+      box-shadow: 0 5px 60px #00ffea, 0 3px 24px #00fff599;
+      transform: translateY(-4px) scale(1.04);
+      z-index:2;
+    }
+    @keyframes cardNeonPulse {
+      0%, 100% { box-shadow: 0 2px 20px #00ffea20; }
+      50% { box-shadow: 0 4px 40px #00ffea60; }
+    }
+    .burst-particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #00ffea;
+      opacity: 0;
+      animation: burst 0.5s ease-out;
+      pointer-events: none;
+    }
+    @keyframes burst {
+      0% { opacity: 1; transform: scale(1) translate(0,0); }
+      100% { opacity: 0; transform: scale(0) translate(var(--tx), var(--ty)); }
+    }
+    .modal-bg {
+      background: rgba(13,14,32,0.90);
+      position: fixed;inset:0;
+      z-index:10;display:flex;
+      align-items:center;justify-content:center;
+      animation: fadeIn .3s;
+    }
+    @keyframes fadeIn {
+      from{opacity:0;}to{opacity:1;}
+    }
+    .modal-content {
+      animation: modalScaleFade .4s ease-out;
+    }
+    @keyframes modalScaleFade {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .heart-beat {
+      display: inline-block;
+      animation: heartBeat 1.2s infinite;
+    }
+    @keyframes heartBeat {
+      0% { transform: scale(1); }
+      14% { transform: scale(1.3); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.3); }
+      70% { transform: scale(1); }
+    }
+    .data-update {
+      animation: dataFade 0.5s;
+    }
+    @keyframes dataFade {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="relative min-h-screen overflow-x-hidden font-sans">
+
+ 
+  <div id="starfield"></div>
+
+ 
+  <header class="flex items-center gap-4 justify-between px-6 py-4 fixed top-0 left-0 right-0 bg-[#101122ee] backdrop-blur-md z-10">
+    <div class="text-cyan-200 font-bold tracking-wider text-lg">GALACTIC COMMAND CENTER</div>
+    <div class="flex items-center gap-4">
+      <span id="utc" class="text-cyan-400 text-xs tracking-wider"></span>
+      <span id="alert-dot" class="block w-2 h-2 rounded-full bg-rose-500"></span>
+    </div>
+  </header>
+
+  <!-- Mission cards grid -->
+  <main class="pt-24 px-4 sm:px-8 pb-10 min-h-[calc(100vh-8rem)]">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 w-full max-w-7xl mx-auto">
+
+
+      
+      <!-- Satellite Telemetry Card -->
+      <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
+        onclick="showModal('satellite')">
+        <div class="text-cyan-300 mb-4 font-semibold tracking-wide text-2xl">
+          Satellites
+        </div>
+        <div id="sat-alt" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">420 km</div>
+        <div class="text-sm text-cyan-200 mt-2 opacity-70">Altitude</div>
+      </div>
+
+      <!-- ISS Orbit Card -->
+      <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
+        onclick="showModal('iss')">
+        <div class="text-purple-300 mb-4 font-semibold text-2xl">ISS Orbit</div>
+        <div id="iss-latlon" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">Lat: 25° Lon: 70°</div>
+        <div class="text-sm text-purple-200 mt-2 opacity-70">Location</div>
+      </div>
+
+      <!-- Mars Weather Card -->
+      <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
+        onclick="showModal('mars')">
+        <div class="text-orange-300 mb-4 font-semibold text-2xl">Mars Weather</div>
+        <div id="mars-temp" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">-48°C</div>
+        <div class="text-sm text-orange-200 mt-2 opacity-70">Temperature</div>
+      </div>
+
+      <!-- Asteroid Tracking Card -->
+      <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
+        onclick="showModal('asteroids')">
+        <div class="text-rose-300 mb-4 font-semibold text-2xl">Asteroids</div>
+        <div id="asteroid-next" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">4 days</div>
+        <div class="text-sm text-rose-200 mt-2 opacity-70">Next NEO Approach</div>
+      </div>
+
+      <!-- Lunar Mission Card -->
+      <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
+        onclick="showModal('lunar')">
+        <div class="text-blue-300 mb-4 font-semibold text-2xl">Lunar Mission</div>
+        <div id="lunar-status" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">Orbiting</div>
+        <div class="text-sm text-blue-200 mt-2 opacity-70">Status</div>
+      </div>
+
+      <!-- Crew Vitals Card -->
+      <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
+        onclick="showModal('crew')">
+        <div class="text-green-300 mb-4 font-semibold text-2xl">Crew Vitals</div>
+        <div id="crew-heart" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">75 bpm</div>
+        <div class="text-sm text-green-200 mt-2 opacity-70">Heart Rate</div>
+      </div>
+
+      <!-- Space Weather Card -->
+      <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
+        onclick="showModal('spaceweather')">
+        <div class="text-yellow-300 mb-4 font-semibold text-2xl">Space Weather</div>
+        <div id="space-flare" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">Minor</div>
+        <div class="text-sm text-yellow-200 mt-2 opacity-70">Solar Flare</div>
+      </div>
+
+      <!-- Rocket Missions Card -->
+      <div class="cursor-pointer p-8 sm:p-10 rounded-3xl bg-[#10122aee] card-glow transition duration-150 group relative text-center"
+        onclick="showModal('rockets')">
+        <div class="text-red-300 mb-4 font-semibold text-2xl">Rocket Missions</div>
+        <div id="rocket-alt" class="mt-4 text-4xl sm:text-5xl font-bold text-white drop-shadow">150 km</div>
+        <div class="text-sm text-red-200 mt-2 opacity-70">Altitude</div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="fixed bottom-0 left-0 right-0 bg-[#101122ee] backdrop-blur-md py-3 text-center text-cyan-300 text-sm z-10">
+    Made with <span class="heart-beat">❤️</span> by Hitesh & Vyom Dubey
+  </footer>
+
+  
+  <div id="modal" class="hidden"></div>
+
+  <script>
+
+    
+    function setUTC() {
+      document.getElementById('utc').textContent =
+        'UTC ' + new Date().toUTCString().split(' ')[4];
+    }
+    setUTC();
+    setInterval(setUTC, 1000);
+
+
+    
+    const starCount = 200;
+    const starfield = document.getElementById('starfield');
+    for(let i=0;i<starCount;i++){
+      const s = document.createElement('div');
+      s.className = 'star';
+      s.style.left = Math.random()*100 + 'vw';
+      s.style.top = Math.random()*110 + 'vh';
+      s.style.width = s.style.height = (Math.random()*2+0.5) + 'px';
+      s.style.opacity = String(0.30+Math.random()*0.60);
+      s.style.animationDuration = (10+Math.random()*15)+'s';
+      s.style.animationDelay = (Math.random()* -10)+'s';
+      s.style.background = `rgba(255,255,255,${0.4+Math.random()*0.6})`;
+      starfield.appendChild(s);
+    }
+
+ 
+    
+    function randomBetween(a, b) { return +(Math.random() * (b - a) + a).toFixed(1); }
+    function generateSatelliteData() {
+      return { altitude: randomBetween(400, 1000), speed: randomBetween(7, 8.5), signal: randomBetween(80, 90), time: new Date().toLocaleTimeString() };
+    }
+    function generateISSData() {
+      return { lat: randomBetween(-90, 90), lng: randomBetween(-180, 180), altitude: randomBetween(400, 406), crew: Math.floor(Math.random() * 3 + 4) };
+    }
+    function generateMarsWeather() {
+      return { temp: randomBetween(-70, -60), pressure: randomBetween(6, 7), wind: randomBetween(5, 11), roverStatus: ['Active', 'Idle', 'Charging'][Math.floor(Math.random() * 3)] };
+    }
+    function generateAsteroidData() {
+      return { name: `NEO-${Math.floor(Math.random() * 1000)}`, distance: randomBetween(5, 11), velocity: randomBetween(10, 20), diameter: randomBetween(50, 350), risk: ['Low', 'Moderate', 'High'][Math.floor(Math.random() * 3)] };
+    }
+    function generateLunarMissionData() {
+      return { status: ['Orbiting', 'Landed', 'Returning'][Math.floor(Math.random() * 3)], progress: randomBetween(0, 100), fuel: randomBetween(70, 100), baseTemp: randomBetween(-16, -10) };
+    }
+    function generateCrewData() {
+      return { heartRate: randomBetween(70, 80), oxygen: randomBetween(94, 100), stress: randomBetween(20, 45), status: ['Nominal', 'Resting', 'Active'][Math.floor(Math.random() * 3)] };
+    }
+    function generateSpaceWeatherData() {
+      return { solarFlare: ['None', 'Minor', 'Major'][Math.floor(Math.random() * 3)], geomagnetic: randomBetween(1, 4), radiation: randomBetween(10, 40) };
+    }
+    function generateRocketData(name) {
+      return { name, altitude: randomBetween(100, 400), velocity: randomBetween(5, 8), stage: ['Stage 1', 'Stage 2', 'Orbit'][Math.floor(Math.random() * 3)], lat: randomBetween(-90, 90), lng: randomBetween(-180, 180) };
+    }
+
+
+    
+    let satelliteData = generateSatelliteData();
+    let issData = generateISSData();
+    let marsWeather = generateMarsWeather();
+    let asteroidData = generateAsteroidData();
+    let lunarData = generateLunarMissionData();
+    let crewData = generateCrewData();
+    let spaceWeather = generateSpaceWeatherData();
+    let rocketData = [generateRocketData('Falcon 9'), generateRocketData('Starship'), generateRocketData('Artemis SLS')];
+
+
+    
+    function updateCards() {
+      satelliteData = generateSatelliteData();
+      document.getElementById('sat-alt').textContent = satelliteData.altitude + " km";
+      issData = generateISSData();
+      document.getElementById('iss-latlon').textContent = `Lat: ${issData.lat}° Lon: ${issData.lng}°`;
+      marsWeather = generateMarsWeather();
+      document.getElementById('mars-temp').textContent = marsWeather.temp + "°C";
+      asteroidData = generateAsteroidData();
+      document.getElementById('asteroid-next').textContent = asteroidData.distance + " LD";
+      lunarData = generateLunarMissionData();
+      document.getElementById('lunar-status').textContent = lunarData.status;
+      crewData = generateCrewData();
+      document.getElementById('crew-heart').textContent = crewData.heartRate + " bpm";
+      spaceWeather = generateSpaceWeatherData();
+      document.getElementById('space-flare').textContent = spaceWeather.solarFlare;
+      rocketData = [generateRocketData('Falcon 9'), generateRocketData('Starship'), generateRocketData('Artemis SLS')];
+      document.getElementById('rocket-alt').textContent = rocketData[0].altitude + " km";
+
+
+      
+      ['sat-alt', 'iss-latlon', 'mars-temp', 'asteroid-next', 'lunar-status', 'crew-heart', 'space-flare', 'rocket-alt'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.add('data-update');
+        setTimeout(() => el.classList.remove('data-update'), 500);
+      });
+    }
+    updateCards();
+    setInterval(updateCards, 2500);
+
+
+    
+    document.querySelectorAll('.card-glow').forEach(card => {
+      card.addEventListener('mouseenter', (e) => {
+        for (let i = 0; i < 10; i++) {
+          const p = document.createElement('div');
+          p.className = 'burst-particle';
+          p.style.left = `${Math.random() * card.offsetWidth}px`;
+          p.style.top = `${Math.random() * card.offsetHeight}px`;
+          p.style.setProperty('--tx', `${(Math.random() - 0.5) * 100}px`);
+          p.style.setProperty('--ty', `${(Math.random() - 0.5) * 100}px`);
+          card.appendChild(p);
+          setTimeout(() => p.remove(), 500);
+        }
+      });
+    });
+
+
+    
+    function showModal(card) {
+      let body = '';
+      if (card === 'satellite') {
+        body = `<h2 class="text-cyan-300 text-2xl font-bold mb-4">Satellite Telemetry</h2>
+                <canvas id="satChart" class="w-full h-36"></canvas>
+                <div class="mt-4 text-cyan-200/70 text-base">Altitude: ${satelliteData.altitude} km, Speed: ${satelliteData.speed} km/s, Signal: ${satelliteData.signal} dB</div>`;
+      } else if (card === 'iss') {
+        body = `<h2 class="text-purple-300 text-2xl font-bold mb-4">ISS Orbit</h2>
+                <div class="text-purple-200 pb-2 text-lg">Lat: ${issData.lat}°, Lng: ${issData.lng}°, Altitude: ${issData.altitude} km, Crew: ${issData.crew}</div>
+                <canvas id="issChart" class="w-full h-36"></canvas>`;
+      } else if (card === 'mars') {
+        body = `<h2 class="text-orange-300 text-2xl font-bold mb-4">Mars Weather</h2>
+                <canvas id="marsChart" class="w-full h-44"></canvas>
+                <div class="mt-4 text-orange-200/70 text-base">Temp: ${marsWeather.temp}°C, Pressure: ${marsWeather.pressure} hPa, Wind: ${marsWeather.wind} m/s, Rover: ${marsWeather.roverStatus}</div>`;
+      } else if (card === 'asteroids') {
+        body = `<h2 class="text-rose-300 text-2xl font-bold mb-4">Asteroid Tracking</h2>
+                <div class="text-rose-200 pb-2 text-lg">Name: ${asteroidData.name}, Distance: ${asteroidData.distance} LD, Velocity: ${asteroidData.velocity} km/s, Diameter: ${asteroidData.diameter} m, Risk: ${asteroidData.risk}</div>
+                <canvas id="asteroidChart" class="w-full h-36"></canvas>`;
+      } else if (card === 'lunar') {
+        body = `<h2 class="text-blue-300 text-2xl font-bold mb-4">Lunar Mission</h2>
+                <div class="text-blue-200 pb-2 text-lg">Status: ${lunarData.status}, Progress: ${lunarData.progress}%, Fuel: ${lunarData.fuel}%, Temp: ${lunarData.baseTemp}°C</div>
+                <canvas id="lunarChart" class="w-full h-36"></canvas>`;
+      } else if (card === 'crew') {
+        body = `<h2 class="text-green-300 text-2xl font-bold mb-4">Crew Vitals</h2>
+                <div class="text-green-200 pb-2 text-lg">Heart Rate: ${crewData.heartRate} bpm, Oxygen: ${crewData.oxygen}%, Stress: ${crewData.stress}, Status: ${crewData.status}</div>
+                <canvas id="crewChart" class="w-full h-36"></canvas>`;
+      } else if (card === 'spaceweather') {
+        body = `<h2 class="text-yellow-300 text-2xl font-bold mb-4">Space Weather</h2>
+                <div class="text-yellow-200 pb-2 text-lg">Solar Flare: ${spaceWeather.solarFlare}, Geomagnetic: ${spaceWeather.geomagnetic} Kp, Radiation: ${spaceWeather.radiation} mSv</div>
+                <canvas id="spaceChart" class="w-full h-36"></canvas>`;
+      } else if (card === 'rockets') {
+        body = `<h2 class="text-red-300 text-2xl font-bold mb-4">Rocket Missions</h2>
+                <div class="text-red-200 pb-2 text-lg">${rocketData.map(r => `${r.name}: Altitude ${r.altitude} km, Velocity ${r.velocity} km/s`).join('<br>')}</div>
+                <canvas id="rocketChart" class="w-full h-36"></canvas>`;
+      }
+      document.getElementById('modal').innerHTML = `
+        <div class="modal-bg" onclick="closeModal(event)">
+          <div class="modal-content rounded-2xl bg-[#181d36] max-w-lg md:max-w-2xl p-8 drop-shadow-lg text-white space-y-3"
+               onclick="event.stopPropagation()">
+            <button onclick="closeModal(event)" class="absolute top-3 right-4 text-cyan-200 text-2xl font-bold">&times;</button>
+            ${body}
+          </div>
+        </div>`;
+      document.getElementById('modal').className = '';
+      setTimeout(() => drawModalChart(card), 80);
+    }
+    function closeModal(e){
+      document.getElementById('modal').className='hidden';
+    }
+
+    function drawModalChart(card) {
+      if (card === 'satellite') {
+        new Chart(document.getElementById('satChart'), {
+          type: 'doughnut',
+          data: { labels: ['Altitude', 'Speed', 'Signal'], datasets: [{ data: [satelliteData.altitude, satelliteData.speed, satelliteData.signal], backgroundColor: ['#00ffea', '#0ff', '#079fff'] }] }
+        });
+      } else if (card === 'iss') {
+        new Chart(document.getElementById('issChart'), {
+          type: 'line',
+          data: { labels: ['Lat', 'Lng', 'Altitude'], datasets: [{ label: 'ISS Data', data: [issData.lat, issData.lng, issData.altitude], borderColor: '#a259ec' }] }
+        });
+      } else if (card === 'mars') {
+        new Chart(document.getElementById('marsChart'), {
+          type: 'bar',
+          data: { labels: ['Temp', 'Pressure', 'Wind'], datasets: [{ data: [marsWeather.temp, marsWeather.pressure, marsWeather.wind], backgroundColor: ['#ff6a3d', '#ffe51b', '#00ffea'] }] }
+        });
+      } else if (card === 'asteroids') {
+        new Chart(document.getElementById('asteroidChart'), {
+          type: 'polarArea',
+          data: { labels: ['Distance', 'Velocity', 'Diameter'], datasets: [{ data: [asteroidData.distance, asteroidData.velocity, asteroidData.diameter], backgroundColor: ['#ef4444', '#f59e0b', '#10b981'] }] }
+        });
+      } else if (card === 'lunar') {
+        new Chart(document.getElementById('lunarChart'), {
+          type: 'doughnut',
+          data: { labels: ['Progress', 'Fuel'], datasets: [{ data: [lunarData.progress, lunarData.fuel], backgroundColor: ['#3b82f6', '#10b981'] }] }
+        });
+      } else if (card === 'crew') {
+        new Chart(document.getElementById('crewChart'), {
+          type: 'doughnut',
+          data: { labels: ['Heart Rate', 'Oxygen', 'Stress'], datasets: [{ data: [crewData.heartRate, crewData.oxygen, crewData.stress], backgroundColor: ['#10b981', '#3b82f6', '#f59e0b'] }] }
+        });
+      } else if (card === 'spaceweather') {
+        new Chart(document.getElementById('spaceChart'), {
+          type: 'line',
+          data: { labels: ['Geomagnetic', 'Radiation'], datasets: [{ data: [spaceWeather.geomagnetic, spaceWeather.radiation], borderColor: '#f59e0b' }] }
+        });
+      } else if (card === 'rockets') {
+        new Chart(document.getElementById('rocketChart'), {
+          type: 'bar',
+          data: { labels: rocketData.map(r => r.name), datasets: [{ label: 'Altitude', data: rocketData.map(r => r.altitude), backgroundColor: ['#3b82f6', '#ff0000', '#f59e0b'] }] }
+        });
+      }
+    }
+
+    //to use esc
+    window.addEventListener('keydown', e=>{if(e.key==='Escape'){closeModal();}});
+  </script>
+</body>
+</html>
